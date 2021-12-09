@@ -7,6 +7,7 @@
 .app_header{
   display: flex;
   justify-content: center;
+  background-image: linear-gradient(to right, #143705, #30600f, #528d15, #7abb17, #a8eb12);
 }
 
 .app_body{
@@ -24,8 +25,41 @@
   background-color: antiquewhite;
   width: 50%;
   display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.col_1{
+  background-color: antiquewhite;
+  width: 50%;
+  display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 20px;
+  padding: 0px;
+}
+
+.up_dwd{
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.up_dwd > Button{
+  background-color:rgb(223, 157, 59);
+  margin-bottom: 50px;
+  cursor: pointer;
+}
+
+.dwd{
+  text-decoration-line: none;
+  background-color: burlywood;
+  color: black;
+  padding: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.dwd:hover{
+  background-color: rgb(235, 231, 225);
 }
