@@ -139,7 +139,7 @@ export default function App() {
                   <h2>Geocoding Application Info</h2><br/>
                   <p>If you would like to display a point on the map you can select the borough and enter the address in the designated areas.</p><br/>
                   <p>If you would like to upload a csv with addresses click the upload csv button. Once clicked you can download a json file containing the corresponding info of each address but clicking the download json button </p><br/>
-                  <h3>CSV format should be: borough, addressNo, street</h3><br/>
+                  <h3>CSV format should be: func, borough, addressNo, street</h3><br/>
                   <h3>Json file will include:</h3><br/>
                   <p>a.Latitude (usually around 40 to 41 degrees North)</p><br/><p>b.Longitude (usually around 72 degrees West (usually expressed as -72)</p><br/><p>c.XY (northing and easting for NY State Plane for Long Island, and its usually a long list of numbers)</p><br/><p>d.Street it is located on (“OnStreet”)</p><br/><p>e.The cross streets (the “FromStreet” and the “ToStreet”)</p><br/><p>f.The Segment ID of the OnStreetg.The BBL (stands for Borough, Block and Lot)</p><br/><p>h.The Blockface (if available)</p><br/><p>i.The political districts (Borough, City Council (CC), Community District (CD), NYS Assembly District (AD), NYS Senate District (SS), Congressional District (CG), Neighborhood Tabulation Area (NTA) 2020, Community Tabulation Area (CTA) 2020</p>
                 </div>
