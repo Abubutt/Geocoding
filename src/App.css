@@ -21,7 +21,7 @@
   width: 50%;
 }
 
-.RightSelect {
+.LeftSelect {
   background-color: antiquewhite;
   width: 50%;
   display: flex;
@@ -43,16 +43,24 @@
   width: 50%;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: flex-start;
 }
 
-.up_dwd > Button{
+.up > Button{
   background-color:rgb(223, 157, 59);
   margin-bottom: 50px;
   cursor: pointer;
 }
 
 .dwd{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.dwd > a{
   text-decoration-line: none;
   background-color: burlywood;
   color: black;
@@ -60,6 +68,15 @@
   border-radius: 5px;
   cursor: pointer;
 }
-.dwd:hover{
+.dwd > a:hover{
   background-color: rgb(235, 231, 225);
+}
+
+.legend{
+  flex: 1;
+  margin-top: 20px;
+  width: 100%;
+  height: 50%;
+  background-color: rgb(202, 223, 18);
+  box-shadow: 5px 10px, antiquewhite;;
 }

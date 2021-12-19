@@ -4,7 +4,8 @@ import { Icon, map, Renderer } from "leaflet";
 import { FormControl, MenuItem, Select, TextField, Button } from "@material-ui/core";
 import axios from "axios";
 import './App.css';
-import { CSVLink, CSVDownload } from "react-csv";;
+import { CSVLink, CSVDownload } from "react-csv";
+import { fs } from "fs";
 
 export default function App() {
   const [apidata, setData] = useState([40.7128, -74.0060]);
@@ -14,8 +15,7 @@ export default function App() {
   const [street, setStreet] = useState("");
   const [locate, setLocate] = useState("");
   const [csvData, setCsvData] = useState([]);
-  const mapRef = useRef();
-
+  const [jsonData, setJsonData] = useState([]);
 
   useEffect(() =>{
     
@@ -56,7 +56,8 @@ export default function App() {
   }
 
   async function fileUpload(){
-    let csvData = [];
+    let Jdata = {"data": []};
+    let boroughs = {"manhattan": 1, "bronx": 2, "brooklyn": 3, "queens": 4, "staten island": 5};
     let [fileHandle] = await window.showOpenFilePicker();
     let fileDate = await fileHandle.getFile();
     let text = await fileDate.text();
@@ -67,13 +68,14 @@ export default function App() {
       var borough1 = line[1].trim();
       var address1 = line[2].trim();
       var street1 = line[3].trim();
-      await axios.get(`https://geoservice.planning.nyc.gov/geoservice/geoservice.svc/Function_1A?Borough=${borough1.toLowerCase()}&AddressNo=${address1}&StreetName=${street1}&Key=EAsAqrnWzxrjpbht`)
+      await axios.get(`https://geoservice.planning.nyc.gov/geoservice/geoservice.svc/Function_1B?Borough=${borough1.toLowerCase()}&AddressNo=${address1.toLowerCase()}&StreetName=${street1.toLowerCase()}&Key=EAsAqrnWzxrjpbht`)
       .then((response) => response['data']['display'])
       .then((data) => {
-        csvData.push({"lat": data['out_lat_property'], "lon": data['out_lon_property'].trim()});
+        Jdata["data"].push({"borough": borough1, "addressNo": address1, "street": street1, "lat": data["out_lat_property"], "lon": data["out_lon_property"], "out_x_coord_property": data["out_x_coord_property"], "out_y_coord_property": data["out_y_coord_property"], "Cross Streets": {"From Street": data["LowB7SCList"][0]["streetName"].trim(), "To Street": data["HighB7SCList"][0]["streetName"].trim()}, "Segment ID": data["out_segment_id"], "BBL": data["out_bbl"], "Blockface ID": data["out_blockface_id"], "Political Districts": {"Borough": data["out_boro_name1"], "Community District": data["out_cd"], "NYS Assembly District": data["out_ad"], "Neighborhood Tabulation Area": data["out_nta_2020"], "Community Tabulation Area": data["out_cdta_2020"]}});
+        console.log(data);
       });
     }
-    setCsvData(csvData);
+    setJsonData(Jdata);
   }
 
   return (              
@@ -82,31 +84,15 @@ export default function App() {
           <h1>Geocoding Application</h1>
         </div>
         <div className="app_body">
-          <MapContainer ref={mapRef} className="map" center={[40.7128, -74.0060]} zoom={11} scrollWheelZoom={false}>
+          <MapContainer className="map" center={[40.7128, -74.0060]} zoom={11} scrollWheelZoom={false}>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {!isNaN(parseFloat(apidata[0])) && <Marker key="bwy" position={[parseFloat(apidata[0]), parseFloat(apidata[1])]}><Popup>lat: {apidata[0]}<br/>lon: {apidata[1]}</Popup></Marker> }
+            {!isNaN(parseFloat(apidata[0])) && <Marker key="bwy" position={[parseFloat(apidata[0]), parseFloat(apidata[1])]}><Popup><h3>{address} {street} {borough}, NY</h3>lat: {apidata[0]}<br/>lon: {apidata[1]}</Popup></Marker> }
           </MapContainer>
-
-          <div className="RightSelect">
+          <div className="LeftSelect">
             <div className="col_1">
-            <div className="function_menu">
-              <h2>Function</h2>
-              <FormControl className="function__dropdown">
-                <Select
-                  variant="outlined"
-                  value={func}
-                  onChange={onFuncChange}
-                >
-                  <MenuItem value="Function_1A">Function_1A</MenuItem>
-                  <MenuItem value="Function_1B">Function_1B</MenuItem>
-                  <MenuItem value="Function_1E">Function_1E</MenuItem>
-                  <MenuItem value="Function_AP">Function_AP</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
             <div className ="Borough_menu">
               <h2>Borough</h2>
               <FormControl className="borough__dropdown">
@@ -134,10 +120,29 @@ export default function App() {
             <Button variant="contained" onClick={onLocateChange}>Locate</Button>
             </div>
             <div className="up_dwd">
-              <h2>Upload Csv file</h2>
-              <Button onClick={fileUpload}>Upload</Button>
-              <h2>Download Csv file</h2>
-              <CSVLink className="dwd" data={csvData} filename="lat_lon">Download</CSVLink>
+                <div className="up">
+                  <h2>Upload Csv file</h2>
+                  <Button onClick={fileUpload}>Upload</Button>
+                </div>
+                <div className="dwd">
+                  <h2>Download Json file</h2>
+                  <a
+                    href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                      JSON.stringify(jsonData)
+                    )}`}
+                    download="data.json"
+                  >
+                    {`Download Json`}
+                  </a>
+                </div>
+                <div className="legend">
+                  <h2>Geocoding Application Info</h2><br/>
+                  <p>If you would like to display a point on the map you can select the borough and enter the address in the designated areas.</p><br/>
+                  <p>If you would like to upload a csv with addresses click the upload csv button. Once clicked you can download a json file containing the corresponding info of each address but clicking the download json button </p><br/>
+                  <h3>CSV format should be: borough, addressNo, street</h3><br/>
+                  <h3>Json file will include:</h3><br/>
+                  <p>a.Latitude (usually around 40 to 41 degrees North)</p><br/><p>b.Longitude (usually around 72 degrees West (usually expressed as -72)</p><br/><p>c.XY (northing and easting for NY State Plane for Long Island, and its usually a long list of numbers)</p><br/><p>d.Street it is located on (“OnStreet”)</p><br/><p>e.The cross streets (the “FromStreet” and the “ToStreet”)</p><br/><p>f.The Segment ID of the OnStreetg.The BBL (stands for Borough, Block and Lot)</p><br/><p>h.The Blockface (if available)</p><br/><p>i.The political districts (Borough, City Council (CC), Community District (CD), NYS Assembly District (AD), NYS Senate District (SS), Congressional District (CG), Neighborhood Tabulation Area (NTA) 2020, Community Tabulation Area (CTA) 2020</p>
+                </div>
             </div>
           </div>
         </div>
