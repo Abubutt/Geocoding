@@ -128,7 +128,7 @@ export default function App() {
                   <Button onClick={fileUpload}>Upload</Button>
                 </div>
                 <div className="dwd">
-                  <h2>Download Json file</h2>
+                  <h2>Download Json/CSV file</h2>
                   <div className="dwd_options">
                     <a
                       href={`data:text/json;charset=utf-8,${encodeURIComponent(
