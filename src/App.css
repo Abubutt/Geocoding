@@ -60,15 +60,21 @@
   align-items: flex-start;
 }
 
-.dwd > a{
+.dwd_options{
+  display: flex;
+  justify-content: space-between;
+}
+
+.dwd_options > a{
   text-decoration-line: none;
   background-color: burlywood;
   color: black;
   padding: 8px;
+  margin-right: 8px;
   border-radius: 5px;
   cursor: pointer;
 }
-.dwd > a:hover{
+.dwd_options > a:hover{
   background-color: rgb(235, 231, 225);
 }
 
